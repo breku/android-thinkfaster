@@ -1,5 +1,6 @@
 package com.thinkfaster.model.json;
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -8,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class GameParameters {
 
-    @JsonProperty("gameID")
+    @JsonProperty
     private Long gameID;
 
     public GameParameters() {

@@ -1,5 +1,8 @@
 package com.thinkfaster.model.scene;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.model.shape.GameTypeMenuItem;
 import com.thinkfaster.service.HighScoreService;
@@ -30,6 +33,17 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         init(objects);
         createBackground();
         createButtons();
+
+        gameToast("aaaa");
+    }
+
+    private void gameToast(final String msg) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void init(Object... objects) {

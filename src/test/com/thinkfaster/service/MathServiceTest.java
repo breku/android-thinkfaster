@@ -14,7 +14,6 @@ import org.junit.runners.JUnit4;
  * User: Breku
  * Date: 19.10.13
  */
-@RunWith(JUnit4.class)
 public class MathServiceTest {
 
     private final Integer NUMBER_OF_LOOPS = 1000;
