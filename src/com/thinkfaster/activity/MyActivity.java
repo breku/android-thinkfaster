@@ -8,12 +8,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
+import com.thinkfaster.service.AdvertService;
 import com.thinkfaster.service.GcmBroadCastReceiver;
 import com.thinkfaster.service.MyGooglePlayService;
 import com.thinkfaster.service.RegisterDeviceService;
@@ -40,19 +39,14 @@ public class MyActivity extends BaseGameActivity {
     private GcmBroadCastReceiver gcmBroadCastReceiver;
     private MyGooglePlayService myGooglePlayService;
     private RegisterDeviceService registerDeviceService;
-
-    private GoogleCloudMessaging gcm;
-    private String registrationId;
-    private Context context;
+    private AdvertService advertService;
 
     @Override
     protected void onCreate(final Bundle pSavedInstanceState) {
+        createServices();
         super.onCreate(pSavedInstanceState);
         createGcmResources();
-        createServices();
         registerDevice();
-
-
     }
 
     private void registerDevice() {
@@ -62,6 +56,7 @@ public class MyActivity extends BaseGameActivity {
     private void createServices() {
         myGooglePlayService = new MyGooglePlayService();
         registerDeviceService = new RegisterDeviceService(this);
+        advertService  = new AdvertService(this);
     }
 
     private void createGcmResources() {
@@ -93,30 +88,8 @@ public class MyActivity extends BaseGameActivity {
         mRenderSurfaceView.setRenderer(mEngine, this);
 
         try {
-            adView = new AdView(this);
-            adView.setTag("adView");
-            adView.setAdUnitId(ContextConstants.MY_AD_UNIT_ID);
-            adView.setAdSize(AdSize.SMART_BANNER);
-            adView.refreshDrawableState();
-            adView.setVisibility(AdView.VISIBLE);
-            adView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
-                    Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM));
-
-            AdRequest request = new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .addTestDevice("2D91A564A65AF57C28A98B6EC9456D29")
-                    .addTestDevice("7F8C8CB8DDF62CBD63E1AE7D4693C1F5")
-                    .build();
-
-            adView.loadAd(request);
-
-            final FrameLayout.LayoutParams adViewLayoutParams =
-                    new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-                            FrameLayout.LayoutParams.WRAP_CONTENT,
-                            Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
-
-
+            adView = advertService.createAdView();
+            final FrameLayout.LayoutParams adViewLayoutParams = advertService.getAdViewLayoutParams();
             frameLayout.addView(this.mRenderSurfaceView);
             frameLayout.addView(adView, adViewLayoutParams);
         } catch (Exception e) {
@@ -131,6 +104,7 @@ public class MyActivity extends BaseGameActivity {
         this.setContentView(frameLayout, frameLayoutLayoutParams);
         Log.i(TAG, "<< Setting content view finished");
     }
+
 
     @Override
     public EngineOptions onCreateEngineOptions() {

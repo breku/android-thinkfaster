@@ -10,5 +10,5 @@ public final class SharedPreferencesKeys {
     }
 
     public static final String REGISTRATION_ID = "registrationId";
-    public static final String APP_VERSION = "registrationId";
+    public static final String APP_VERSION = "appVersion";
 }
