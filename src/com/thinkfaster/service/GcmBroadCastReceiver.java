@@ -3,7 +3,8 @@ package com.thinkfaster.service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import android.os.Bundle;
+import android.util.Log;
 
 /**
  * User: Breku
@@ -11,10 +12,17 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
  */
 public class GcmBroadCastReceiver extends BroadcastReceiver {
 
-    private String broadcastMessage = "No broadcast message";
+    private static final String TAG = "GcmBroadCastReceiver";
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.i(TAG, ">> Message received");
+        Bundle bundle = intent.getExtras();
+        for (String key : bundle.keySet()) {
+            Log.i(TAG, ">> " + key + "=" + bundle.get(key));
+        }
 
+        Log.i(TAG, "<< Message received finished");
     }
 }
