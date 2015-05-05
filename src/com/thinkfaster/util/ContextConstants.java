@@ -7,7 +7,7 @@ import org.andengine.util.level.constants.LevelConstants;
  * User: Breku
  * Date: 21.09.13
  */
-public class ConstantsUtil implements Constants, LevelConstants {
+public class ContextConstants implements Constants, LevelConstants {
 
     public static final int SCREEN_WIDTH = 800;
     public static final int SCREEN_HEIGHT = 480;
@@ -30,6 +30,12 @@ public class ConstantsUtil implements Constants, LevelConstants {
     public static final Integer MINIMUM_SCORE_TO_UNLOCK_LEVEL = 30;
 
     public static final String MY_AD_UNIT_ID = "ca-app-pub-6574392848136998/7431396465";
+
+
+    public static final String SENDER_ID = "76038150616";
+
+
+
 
 
 }

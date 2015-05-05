@@ -1,7 +1,7 @@
 package com.thinkfaster.model.shape;
 
 import com.thinkfaster.manager.ResourcesManager;
-import com.thinkfaster.util.ConstantsUtil;
+import com.thinkfaster.util.ContextConstants;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.ColorModifier;
 import org.andengine.entity.modifier.IEntityModifier;
@@ -21,39 +21,39 @@ public class LifeBar extends Rectangle {
 
 
     public LifeBar() {
-        super(ConstantsUtil.SCREEN_WIDTH / 2, 460, 800, 30, ResourcesManager.getInstance().getVertexBufferObjectManager());
+        super(ContextConstants.SCREEN_WIDTH / 2, 460, 800, 30, ResourcesManager.getInstance().getVertexBufferObjectManager());
         setColor(standardGreenColor);
         setZIndex(1);
 
     }
 
     public void goodClick() {
-        IEntityModifier colorModifier = new ColorModifier(ConstantsUtil.LIFE_BAR_COLOR_CHANGE_TIME, standardGreenColor, goodGreenColor) {
+        IEntityModifier colorModifier = new ColorModifier(ContextConstants.LIFE_BAR_COLOR_CHANGE_TIME, standardGreenColor, goodGreenColor) {
             @Override
             protected void onModifierFinished(IEntity pItem) {
                 super.onModifierFinished(pItem);
-                pItem.registerEntityModifier(new ColorModifier(ConstantsUtil.LIFE_BAR_COLOR_CHANGE_TIME, goodGreenColor, standardGreenColor));
+                pItem.registerEntityModifier(new ColorModifier(ContextConstants.LIFE_BAR_COLOR_CHANGE_TIME, goodGreenColor, standardGreenColor));
 
             }
         };
 
-        IEntityModifier moveModifier = new MoveByModifier(ConstantsUtil.LIFE_BAR_COLOR_CHANGE_TIME, ConstantsUtil.LIFE_BAR_AMOUNT_OF_GOOD_PIXES, 0);
+        IEntityModifier moveModifier = new MoveByModifier(ContextConstants.LIFE_BAR_COLOR_CHANGE_TIME, ContextConstants.LIFE_BAR_AMOUNT_OF_GOOD_PIXES, 0);
 
         registerEntityModifier(moveModifier);
         registerEntityModifier(colorModifier);
     }
 
     public void wrongClick() {
-        IEntityModifier colorModifier = new ColorModifier(ConstantsUtil.LIFE_BAR_COLOR_CHANGE_TIME, standardGreenColor, redColor) {
+        IEntityModifier colorModifier = new ColorModifier(ContextConstants.LIFE_BAR_COLOR_CHANGE_TIME, standardGreenColor, redColor) {
             @Override
             protected void onModifierFinished(IEntity pItem) {
                 super.onModifierFinished(pItem);
-                pItem.registerEntityModifier(new ColorModifier(ConstantsUtil.LIFE_BAR_COLOR_CHANGE_TIME, redColor, standardGreenColor));
+                pItem.registerEntityModifier(new ColorModifier(ContextConstants.LIFE_BAR_COLOR_CHANGE_TIME, redColor, standardGreenColor));
 
             }
         };
 
-        IEntityModifier moveModifier = new MoveByModifier(ConstantsUtil.LIFE_BAR_COLOR_CHANGE_TIME, -1 * ConstantsUtil.LIFE_BAR_AMOUNT_OF_WRONG_PIXES, 0);
+        IEntityModifier moveModifier = new MoveByModifier(ContextConstants.LIFE_BAR_COLOR_CHANGE_TIME, -1 * ContextConstants.LIFE_BAR_AMOUNT_OF_WRONG_PIXES, 0);
 
         registerEntityModifier(moveModifier);
         registerEntityModifier(colorModifier);
@@ -61,7 +61,7 @@ public class LifeBar extends Rectangle {
     }
 
     public boolean isEnd() {
-        if (getX() < -1 * ConstantsUtil.SCREEN_WIDTH / 2 + 5) {
+        if (getX() < -1 * ContextConstants.SCREEN_WIDTH / 2 + 5) {
             return true;
         }
         return false;

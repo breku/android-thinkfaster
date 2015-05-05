@@ -2,7 +2,7 @@ package com.thinkfaster.model.scene;
 
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
-import com.thinkfaster.util.ConstantsUtil;
+import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -30,7 +30,7 @@ public class EndGameScene extends BaseScene implements IOnSceneTouchListener {
     }
 
     private void createBackground(Integer score) {
-        attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH / 2, ConstantsUtil.SCREEN_HEIGHT / 2,
+        attachChild(new Sprite(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2,
                 ResourcesManager.getInstance().getEndGameBackgroundTextureRegion(), vertexBufferObjectManager));
         attachChild(new Text(400, 200, ResourcesManager.getInstance().getWhiteFont(),
                 "score: " + score.toString(), vertexBufferObjectManager));

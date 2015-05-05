@@ -3,8 +3,6 @@ package com.thinkfaster.activity;
 
 import android.content.Context;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -18,7 +16,8 @@ import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.service.GcmBroadCastReceiver;
 import com.thinkfaster.service.MyGooglePlayService;
-import com.thinkfaster.util.ConstantsUtil;
+import com.thinkfaster.service.RegisterDeviceService;
+import com.thinkfaster.util.ContextConstants;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -35,12 +34,12 @@ import java.io.IOException;
 public class MyActivity extends BaseGameActivity {
 
     private static final String TAG = "MyActivity";
-    private static final String SENDER_ID = "76038150616";
     private Camera camera;
     private AdView adView;
     private IntentFilter gcmFilter;
     private GcmBroadCastReceiver gcmBroadCastReceiver;
-    private MyGooglePlayService myGooglePlayService =new MyGooglePlayService();
+    private MyGooglePlayService myGooglePlayService;
+    private RegisterDeviceService registerDeviceService;
 
     private GoogleCloudMessaging gcm;
     private String registrationId;
@@ -50,91 +49,25 @@ public class MyActivity extends BaseGameActivity {
     protected void onCreate(final Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
         createGcmResources();
+        createServices();
         registerDevice();
 
+
+    }
+
+    private void registerDevice() {
+        registerDeviceService.registerDevice();
+    }
+
+    private void createServices() {
+        myGooglePlayService = new MyGooglePlayService();
+        registerDeviceService = new RegisterDeviceService(this);
     }
 
     private void createGcmResources() {
         gcmBroadCastReceiver = new GcmBroadCastReceiver();
         gcmFilter = new IntentFilter();
         gcmFilter.addAction("GCM_RECEIVED_ACTION");
-    }
-
-    private void registerDevice() {
-        Log.i(TAG,">> Registering device");
-        boolean playServicesAvailable = myGooglePlayService.checkPlayServices(this);
-
-        context = getApplicationContext();
-        if (playServicesAvailable) {
-            gcm = GoogleCloudMessaging.getInstance(this);
-
-            registrationId = myGooglePlayService.getRegistrationId(context);
-            Log.i(TAG,">> registration id from sharedPreferences:" + registrationId);
-
-            if (registrationId.isEmpty()) {
-                registerInBackground();
-            }
-        } else {
-            Log.w(TAG, "No valid Google Play Services APK found.");
-
-        }
-        Log.i(TAG,"<< Registering device finished");
-
-    }
-    public static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
-    private void registerInBackground() {
-        new AsyncTask() {
-            @Override
-            protected String doInBackground(Object[] objects) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(context);
-                    }
-                    registrationId = gcm.register(SENDER_ID);
-                    msg = "Device registered, registration ID=" + registrationId;
-
-                    // You should send the registration ID to your server over HTTP,
-                    // so it can use GCM/HTTP or CCS to send messages to your app.
-                    // The request to your server should be authenticated if your app
-                    // is using accounts.
-                    sendRegistrationIdToBackend();
-
-                    // For this demo: we don't need to send it because the device
-                    // will send upstream messages to a server that echo back the
-                    // message using the 'from' address in the message.
-
-                    // Persist the registration ID - no need to register again.
-                    storeRegistrationId(context, registrationId);
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-                    // If there is an error, don't just keep trying to register.
-                    // Require the user to click a button again, or perform
-                    // exponential back-off.
-                }
-                return msg;
-            }
-            private void storeRegistrationId(Context context, String regId) {
-                final SharedPreferences prefs = myGooglePlayService.getGCMPreferences(context);
-                int appVersion = myGooglePlayService.getAppVersion(context);
-                Log.i(TAG, "Saving regId on app version " + appVersion);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(PROPERTY_REG_ID, regId);
-                editor.putInt(PROPERTY_APP_VERSION, appVersion);
-                editor.commit();
-            }
-            private void sendRegistrationIdToBackend() {
-                // Your implementation here.
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                Log.i(TAG,"On post execute object=" + o);
-                super.onPostExecute(o);
-            }
-        }.execute(null, null, null);
-
     }
 
     @Override
@@ -162,7 +95,7 @@ public class MyActivity extends BaseGameActivity {
         try {
             adView = new AdView(this);
             adView.setTag("adView");
-            adView.setAdUnitId(ConstantsUtil.MY_AD_UNIT_ID);
+            adView.setAdUnitId(ContextConstants.MY_AD_UNIT_ID);
             adView.setAdSize(AdSize.SMART_BANNER);
             adView.refreshDrawableState();
             adView.setVisibility(AdView.VISIBLE);
@@ -202,7 +135,7 @@ public class MyActivity extends BaseGameActivity {
     @Override
     public EngineOptions onCreateEngineOptions() {
         Log.i(TAG, ">> Creating engine options");
-        camera = new Camera(0, 0, ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT);
+        camera = new Camera(0, 0, ContextConstants.SCREEN_WIDTH, ContextConstants.SCREEN_HEIGHT);
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), camera);
         engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
         engineOptions.getAudioOptions().setNeedsMusic(true);
@@ -231,7 +164,7 @@ public class MyActivity extends BaseGameActivity {
     @Override
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException {
         Log.i(TAG, ">> Populating scene");
-        getEngine().registerUpdateHandler(new TimerHandler(ConstantsUtil.SPLASH_SCREEN_TIME, new ITimerCallback() {
+        getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.SPLASH_SCREEN_TIME, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 getEngine().unregisterUpdateHandler(pTimerHandler);

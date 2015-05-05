@@ -3,7 +3,7 @@ package com.thinkfaster.model.scene;
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.service.HighScoreService;
-import com.thinkfaster.util.ConstantsUtil;
+import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.LevelDifficulty;
 import com.thinkfaster.util.MathParameter;
 import com.thinkfaster.util.SceneType;
@@ -50,7 +50,7 @@ public class HighScoreScene extends BaseScene implements IOnSceneTouchListener {
     }
 
     private void createBackground() {
-        attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH / 2, ConstantsUtil.SCREEN_HEIGHT / 2,
+        attachChild(new Sprite(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2,
                 ResourcesManager.getInstance().getRecordBackgroundTextureRegion(), vertexBufferObjectManager));
 
     }

@@ -7,7 +7,7 @@ import com.thinkfaster.matcher.ClassTouchAreaMacher;
 import com.thinkfaster.model.shape.*;
 import com.thinkfaster.pool.MathEquationPool;
 import com.thinkfaster.service.HighScoreService;
-import com.thinkfaster.util.ConstantsUtil;
+import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.LevelDifficulty;
 import com.thinkfaster.util.MathParameter;
 import com.thinkfaster.util.SceneType;
@@ -78,7 +78,7 @@ public class GameScene extends BaseScene {
     }
 
     private void createPlayer() {
-        player = new Player(ConstantsUtil.SCREEN_WIDTH / 2, ConstantsUtil.SCREEN_WIDTH / 2, vertexBufferObjectManager, camera);
+        player = new Player(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_WIDTH / 2, vertexBufferObjectManager, camera);
         attachChild(player);
     }
 
@@ -96,7 +96,7 @@ public class GameScene extends BaseScene {
     public void disposeScene() {
         gameHUD.clearChildScene();
         camera.setHUD(null);
-        camera.setCenter(ConstantsUtil.SCREEN_WIDTH / 2, ConstantsUtil.SCREEN_HEIGHT / 2);
+        camera.setCenter(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2);
         camera.setChaseEntity(null);
     }
 
@@ -114,7 +114,7 @@ public class GameScene extends BaseScene {
         multiplayer = (Boolean) objects[2];
 
         pool = new MathEquationPool(levelDifficulty, mathParameter);
-        pool.batchAllocatePoolItems(ConstantsUtil.INITIAL_POOL_SIZE);
+        pool.batchAllocatePoolItems(ContextConstants.INITIAL_POOL_SIZE);
 
         highScoreService = new HighScoreService();
 
@@ -123,7 +123,7 @@ public class GameScene extends BaseScene {
     private void createBackground() {
         unregisterTouchAreas(new ClassTouchAreaMacher(Sprite.class));
         clearChildScene();
-        attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH / 2, ConstantsUtil.SCREEN_HEIGHT / 2,
+        attachChild(new Sprite(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2,
                 ResourcesManager.getInstance().getBackgroundGameTextureRegion(), vertexBufferObjectManager));
 
     }
@@ -177,7 +177,7 @@ public class GameScene extends BaseScene {
         ));
 
         attachChild(lifeBar);
-        Sprite lifeBarBorder = new Sprite(ConstantsUtil.SCREEN_WIDTH / 2, 460, ResourcesManager.getInstance().getLifeBarBorderTextureRegion(), vertexBufferObjectManager);
+        Sprite lifeBarBorder = new Sprite(ContextConstants.SCREEN_WIDTH / 2, 460, ResourcesManager.getInstance().getLifeBarBorderTextureRegion(), vertexBufferObjectManager);
         lifeBarBorder.setZIndex(10);
         attachChild(lifeBarBorder);
 
@@ -262,7 +262,7 @@ public class GameScene extends BaseScene {
             Integer score = numberOfGoodClicks - numberOfWrongClicks;
             if (highScoreService.isHighScore(levelDifficulty, mathParameter, score)) {
                 endGameWin();
-            } else if (score >= ConstantsUtil.MINIMUM_SCORE_TO_UNLOCK_LEVEL) {
+            } else if (score >= ContextConstants.MINIMUM_SCORE_TO_UNLOCK_LEVEL) {
                 endGameHalfWin();
             } else {
                 endGameLose();
@@ -273,7 +273,7 @@ public class GameScene extends BaseScene {
     private void moveAllElements() {
         // Starts from head - bottom
         for (MathEquationText text : mathEquationTextQueue) {
-            text.registerEntityModifier(new MoveYModifier(ConstantsUtil.TEXT_MOVE_TIME, text.getY(), text.getY() - 80));
+            text.registerEntityModifier(new MoveYModifier(ContextConstants.TEXT_MOVE_TIME, text.getY(), text.getY() - 80));
         }
     }
 
@@ -284,7 +284,7 @@ public class GameScene extends BaseScene {
 
     private void addNewTopElement() {
         MathEquationText text = new MathEquationText(400, 460, pool.obtainPoolItem());
-        text.registerEntityModifier(new MoveYModifier(ConstantsUtil.TEXT_MOVE_TIME, text.getY(), text.getY() - 80));
+        text.registerEntityModifier(new MoveYModifier(ContextConstants.TEXT_MOVE_TIME, text.getY(), text.getY() - 80));
         mathEquationTextQueue.add(text);
         attachChild(text);
     }
@@ -292,7 +292,7 @@ public class GameScene extends BaseScene {
     private void endGameWin() {
         Integer score = numberOfGoodClicks - numberOfWrongClicks;
         highScoreService.updateRecordFor(levelDifficulty, mathParameter, score);
-        if (score > ConstantsUtil.MINIMUM_SCORE_TO_UNLOCK_LEVEL) {
+        if (score > ContextConstants.MINIMUM_SCORE_TO_UNLOCK_LEVEL) {
             highScoreService.unlockLevelUpFor(levelDifficulty, mathParameter);
         }
         resourcesManager.getWinSound().play();

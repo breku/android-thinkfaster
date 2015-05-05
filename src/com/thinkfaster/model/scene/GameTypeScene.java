@@ -1,12 +1,10 @@
 package com.thinkfaster.model.scene;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.widget.Toast;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.model.shape.GameTypeMenuItem;
 import com.thinkfaster.service.HighScoreService;
-import com.thinkfaster.util.ConstantsUtil;
+import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.LevelDifficulty;
 import com.thinkfaster.util.MathParameter;
 import com.thinkfaster.util.SceneType;
@@ -52,7 +50,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     }
 
     private void createBackground() {
-        attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH / 2, ConstantsUtil.SCREEN_HEIGHT / 2, resourcesManager.getBackgroundGameTypeTextureRegion(), vertexBufferObjectManager));
+        attachChild(new Sprite(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2, resourcesManager.getBackgroundGameTypeTextureRegion(), vertexBufferObjectManager));
     }
 
     private void createButtons() {
