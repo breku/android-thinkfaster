@@ -25,10 +25,10 @@ public class RegisterDeviceService {
         Log.i(TAG, ">> Registering device");
         if (myGooglePlayService.checkPlayServices(activity)) {
             context = activity.getApplicationContext();
-            String registrationId = myGooglePlayService.getRegistrationIdFromSharedPreferences(context);
-            if (isBlank(registrationId)) {
+//            String registrationId = myGooglePlayService.getRegistrationIdFromSharedPreferences(context);
+//            if (isBlank(registrationId)) {
                 new RegisterTask(context).execute();
-            }
+//            }
 
         } else {
             Log.w(TAG, "No valid Google Play Services APK found.");

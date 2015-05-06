@@ -2,6 +2,7 @@ package com.thinkfaster.model.scene;
 
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
+import com.thinkfaster.service.RegisterDeviceService;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
 import org.andengine.entity.scene.menu.MenuScene;
@@ -78,6 +79,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     }
 
+    private RegisterDeviceService registerDeviceService = new RegisterDeviceService(activity);
     @Override
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
         switch (pMenuItem.getID()) {
@@ -85,6 +87,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 SceneManager.getInstance().loadGameTypeScene(false);
                 break;
             case MULTIPLAYER:
+                registerDeviceService.registerDevice();
                 SceneManager.getInstance().loadGameTypeScene(true);
                 break;
             case ABOUT:

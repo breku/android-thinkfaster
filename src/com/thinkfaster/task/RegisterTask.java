@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.thinkfaster.service.JsonRegisterService;
 import com.thinkfaster.service.MyGooglePlayService;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class RegisterTask extends AsyncTask<String, Void, String> {
     private MyGooglePlayService myGooglePlayService = new MyGooglePlayService();
     private GoogleCloudMessaging gcm;
 
+    private JsonRegisterService jsonRegisterService = new JsonRegisterService();
 
     public RegisterTask(Context context) {
         this.context = context;
@@ -68,7 +70,7 @@ public class RegisterTask extends AsyncTask<String, Void, String> {
 
     private void sendRegistrationIdToServer(String registrationId) {
         Log.i(TAG, ">> Sending registrationId to server");
-        // Your implementation here.
+        jsonRegisterService.sendRegistrationIdToServer(registrationId);
         Log.i(TAG, "<< Sending registrationId to server finished");
     }
 
