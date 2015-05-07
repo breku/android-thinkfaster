@@ -6,6 +6,8 @@ import android.widget.FrameLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.thinkfaster.activity.MyActivity;
+import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.util.ContextConstants;
 
 /**
@@ -44,5 +46,28 @@ public class AdvertService {
         return new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
+    }
+
+    public void hideAdvert() {
+
+        activity.runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MyActivity) ResourcesManager.getInstance().getActivity()).getAdView().setVisibility(AdView.INVISIBLE);
+                    }
+                }
+        );
+    }
+
+    public void showAdvert() {
+        activity.runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MyActivity) ResourcesManager.getInstance().getActivity()).getAdView().setVisibility(AdView.VISIBLE);
+                    }
+                }
+        );
     }
 }

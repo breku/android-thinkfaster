@@ -22,6 +22,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
     private final int EXIT = 3;
     private final int RECORDS = 4;
     private MenuScene menuScene;
+    private RegisterDeviceService registerDeviceService = new RegisterDeviceService(activity);
 
     @Override
     public void createScene(Object... objects) {
@@ -79,16 +80,15 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     }
 
-    private RegisterDeviceService registerDeviceService = new RegisterDeviceService(activity);
     @Override
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
         switch (pMenuItem.getID()) {
             case NEW_GAME:
-                SceneManager.getInstance().loadGameTypeScene(false);
+                SceneManager.getInstance().loadGameTypeScene();
                 break;
             case MULTIPLAYER:
                 registerDeviceService.registerDevice();
-                SceneManager.getInstance().loadGameTypeScene(true);
+                SceneManager.getInstance().loadGameTypeScene();
                 break;
             case ABOUT:
                 SceneManager.getInstance().loadAboutScene();

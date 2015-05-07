@@ -1,7 +1,6 @@
 package com.thinkfaster.activity;
 
 
-import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +8,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.service.AdvertService;
@@ -30,6 +28,8 @@ import org.andengine.ui.activity.BaseGameActivity;
 
 import java.io.IOException;
 
+import static com.thinkfaster.util.ContextConstants.SPLASH_SCREEN_TIME;
+
 public class MyActivity extends BaseGameActivity {
 
     private static final String TAG = "MyActivity";
@@ -49,20 +49,20 @@ public class MyActivity extends BaseGameActivity {
         registerDevice();
     }
 
-    private void registerDevice() {
-        registerDeviceService.registerDevice();
-    }
-
     private void createServices() {
         myGooglePlayService = new MyGooglePlayService();
         registerDeviceService = new RegisterDeviceService(this);
-        advertService  = new AdvertService(this);
+        advertService = new AdvertService(this);
     }
 
     private void createGcmResources() {
         gcmBroadCastReceiver = new GcmBroadCastReceiver();
         gcmFilter = new IntentFilter();
         gcmFilter.addAction("GCM_RECEIVED_ACTION");
+    }
+
+    private void registerDevice() {
+        registerDeviceService.registerDevice();
     }
 
     @Override
@@ -78,6 +78,27 @@ public class MyActivity extends BaseGameActivity {
         super.onPause();
     }
 
+    /**
+     * called 1
+     * @return
+     */
+    @Override
+    public EngineOptions onCreateEngineOptions() {
+        Log.i(TAG, ">> Creating engine options");
+        camera = new Camera(0, 0, ContextConstants.SCREEN_WIDTH, ContextConstants.SCREEN_HEIGHT);
+        EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), camera);
+        engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
+        engineOptions.getAudioOptions().setNeedsMusic(true);
+        engineOptions.getAudioOptions().setNeedsSound(true);
+        engineOptions.getRenderOptions().setDithering(true);
+        Log.i(TAG, "<< Creating engine options finished");
+        return engineOptions;
+    }
+
+
+    /**
+     * called 2
+     */
     @Override
     protected void onSetContentView() {
         Log.i(TAG, ">> Setting content view");
@@ -105,40 +126,44 @@ public class MyActivity extends BaseGameActivity {
         Log.i(TAG, "<< Setting content view finished");
     }
 
-
-    @Override
-    public EngineOptions onCreateEngineOptions() {
-        Log.i(TAG, ">> Creating engine options");
-        camera = new Camera(0, 0, ContextConstants.SCREEN_WIDTH, ContextConstants.SCREEN_HEIGHT);
-        EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), camera);
-        engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
-        engineOptions.getAudioOptions().setNeedsMusic(true);
-        engineOptions.getAudioOptions().setNeedsSound(true);
-        engineOptions.getRenderOptions().setDithering(true);
-        Log.i(TAG, "<< Creating engine options finished");
-        return engineOptions;
-    }
-
+    /**
+     * called 3, inside onCreateScene is called, it finishes after onCreateScene finishes
+     * @param pOnCreateResourcesCallback
+     * @throws IOException
+     */
     @Override
     public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) throws IOException {
         Log.i(TAG, ">> Creating resources");
         ResourcesManager.prepareManager(getEngine(), this, camera, getVertexBufferObjectManager());
+        SceneManager.prepareManager(this);
         pOnCreateResourcesCallback.onCreateResourcesFinished();
         Log.i(TAG, "<< Creating resources finished");
     }
 
+    /**
+     * called from onCreateResources
+     * @param pOnCreateSceneCallback
+     * @throws IOException
+     */
     @Override
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException {
         Log.i(TAG, ">> Creating scene");
         SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
+        SceneManager.getInstance().initializeServices();
         Log.i(TAG, "<< Creating scene finished");
 
     }
 
+    /**
+     * called from onCreateScene
+     * @param pScene
+     * @param pOnPopulateSceneCallback
+     * @throws IOException
+     */
     @Override
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException {
         Log.i(TAG, ">> Populating scene");
-        getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.SPLASH_SCREEN_TIME, new ITimerCallback() {
+        getEngine().registerUpdateHandler(new TimerHandler(SPLASH_SCREEN_TIME, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 getEngine().unregisterUpdateHandler(pTimerHandler);

@@ -1,5 +1,6 @@
 package com.thinkfaster.model.scene;
 
+import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.util.SceneType;
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.sprite.Sprite;
@@ -38,6 +39,7 @@ public class SplashScene extends BaseScene {
 
     @Override
     public void disposeScene() {
+        ResourcesManager.getInstance().unloadSplashScreen();
         sprite.detachSelf();
         sprite.dispose();
         this.detachSelf();

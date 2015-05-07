@@ -1,5 +1,6 @@
 package com.thinkfaster.model.scene;
 
+import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
@@ -36,6 +37,7 @@ public class AboutScene extends BaseScene implements IOnSceneTouchListener {
 
     @Override
     public void disposeScene() {
+        ResourcesManager.getInstance().unloadAboutTextures();
     }
 
     @Override

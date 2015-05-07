@@ -122,6 +122,7 @@ public class HighScoreScene extends BaseScene implements IOnSceneTouchListener {
 
     @Override
     public void disposeScene() {
+        ResourcesManager.getInstance().unloadRecordsTextures();
     }
 
     @Override

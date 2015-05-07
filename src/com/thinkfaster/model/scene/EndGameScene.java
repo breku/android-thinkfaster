@@ -48,6 +48,7 @@ public class EndGameScene extends BaseScene implements IOnSceneTouchListener {
 
     @Override
     public void disposeScene() {
+        ResourcesManager.getInstance().unloadEndGameTextures();
     }
 
     @Override

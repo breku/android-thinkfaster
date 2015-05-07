@@ -1,5 +1,6 @@
 package com.thinkfaster.model.scene;
 
+import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
@@ -33,6 +34,6 @@ public class OptionsScene extends BaseScene {
 
     @Override
     public void disposeScene() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        ResourcesManager.getInstance().unloadOptionsTextures();
     }
 }

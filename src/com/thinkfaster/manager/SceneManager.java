@@ -1,8 +1,7 @@
 package com.thinkfaster.manager;
 
-import com.google.android.gms.ads.AdView;
-import com.thinkfaster.activity.MyActivity;
 import com.thinkfaster.model.scene.*;
+import com.thinkfaster.service.AdvertService;
 import com.thinkfaster.util.*;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -17,9 +16,16 @@ public class SceneManager {
 
     private static final SceneManager INSTANCE = new SceneManager();
 
+    private BaseGameActivity activity;
+
     private SceneType currentSceneType = SceneType.SPLASH;
-    private BaseScene gameScene, menuScene, loadingScene, splashScene, currentScene,
+    private BaseScene singlePlayerGameScene, menuScene, loadingScene, splashScene, currentScene,
             aboutScene, optionsScene, endGameScene, recordScene, gameTypeScene;
+    private AdvertService advertService;
+
+    public static void prepareManager(BaseGameActivity activity) {
+        getInstance().activity = activity;
+    }
 
     public static SceneManager getInstance() {
         return INSTANCE;
@@ -44,36 +50,19 @@ public class SceneManager {
     }
 
     public void setScene(BaseScene scene) {
-
-        if (scene instanceof GameScene || scene instanceof GameTypeScene || scene instanceof HighScoreScene
+        if (scene instanceof SinglePlayerGameScene || scene instanceof GameTypeScene || scene instanceof HighScoreScene
                 || scene instanceof AboutScene) {
-            ResourcesManager.getInstance().getActivity().runOnUiThread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            ((MyActivity) ResourcesManager.getInstance().getActivity()).getAdView().setVisibility(AdView.INVISIBLE);
-                        }
-                    }
-            );
+            advertService.hideAdvert();
         } else {
-            ResourcesManager.getInstance().getActivity().runOnUiThread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            ((MyActivity) ResourcesManager.getInstance().getActivity()).getAdView().setVisibility(AdView.VISIBLE);
-                        }
-                    }
-            );
+            advertService.showAdvert();
 
         }
-
         ResourcesManager.getInstance().getEngine().setScene(scene);
         currentScene = scene;
         currentSceneType = scene.getSceneType();
     }
 
     private void disposeSplashScene() {
-        ResourcesManager.getInstance().unloadSplashScreen();
         splashScene.disposeScene();
         splashScene = null;
     }
@@ -93,26 +82,20 @@ public class SceneManager {
         switch (sceneType) {
             case ABOUT:
                 aboutScene.disposeScene();
-                ResourcesManager.getInstance().unloadAboutTextures();
                 break;
-            case GAME:
-                gameScene.disposeScene();
-                ResourcesManager.getInstance().unloadGameTextures();
+            case SINGLE_PLAYER_GAME:
+                singlePlayerGameScene.disposeScene();
                 break;
             case OPTIONS:
-                ResourcesManager.getInstance().unloadOptionsTextures();
                 optionsScene.disposeScene();
                 break;
             case ENDGAME:
-                ResourcesManager.getInstance().unloadEndGameTextures();
                 endGameScene.disposeScene();
                 break;
             case RECORDS:
-                ResourcesManager.getInstance().unloadRecordsTextures();
                 recordScene.disposeScene();
                 break;
             case GAMETYPE:
-                ResourcesManager.getInstance().unloadGameTypeTextures();
                 gameTypeScene.disposeScene();
                 break;
         }
@@ -127,13 +110,17 @@ public class SceneManager {
         }));
     }
 
-    public void loadGameTypeScene(boolean multiplayer) {
-        gameTypeScene = new GameTypeScene(multiplayer);
+    public void loadMultiplayerScene() {
+
+    }
+
+    public void loadGameTypeScene() {
+        gameTypeScene = new GameTypeScene();
         setScene(gameTypeScene);
         ResourcesManager.getInstance().unloadMenuTextures();
     }
 
-    public void loadGameScene(final LevelDifficulty levelDifficulty, final MathParameter mathParameter, final boolean multiplayer) {
+    public void loadGameScene(final LevelDifficulty levelDifficulty, final MathParameter mathParameter) {
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadGameTypeTextures();
         ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.LOADING_SCENE_TIME, new ITimerCallback() {
@@ -141,8 +128,8 @@ public class SceneManager {
             public void onTimePassed(TimerHandler pTimerHandler) {
                 ResourcesManager.getInstance().getEngine().unregisterUpdateHandler(pTimerHandler);
                 ResourcesManager.getInstance().loadGameResources();
-                gameScene = new GameScene(levelDifficulty, mathParameter, multiplayer);
-                setScene(gameScene);
+                singlePlayerGameScene = new SinglePlayerGameScene(levelDifficulty, mathParameter);
+                setScene(singlePlayerGameScene);
             }
         }));
     }
@@ -176,9 +163,9 @@ public class SceneManager {
                     }
                 }));
                 break;
-            case GAME:
+            case SINGLE_PLAYER_GAME:
                 setScene(loadingScene);
-                gameScene.disposeScene();
+                singlePlayerGameScene.disposeScene();
                 ResourcesManager.getInstance().unloadGameTextures();
                 ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.LOADING_SCENE_TIME / 4, new ITimerCallback() {
                     @Override
@@ -204,7 +191,7 @@ public class SceneManager {
     public void loadEndGameScene(Integer score) {
         endGameScene = new EndGameScene(score);
         setScene(endGameScene);
-        gameScene.disposeScene();
+        singlePlayerGameScene.disposeScene();
         ResourcesManager.getInstance().unloadGameTextures();
     }
 
@@ -226,4 +213,7 @@ public class SceneManager {
         return currentScene;
     }
 
+    public void initializeServices() {
+        advertService = new AdvertService(activity);
+    }
 }

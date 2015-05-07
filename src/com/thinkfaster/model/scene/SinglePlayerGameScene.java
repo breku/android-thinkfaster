@@ -27,10 +27,8 @@ import java.util.ArrayDeque;
  * User: Breku
  * Date: 21.09.13
  */
-public class GameScene extends BaseScene {
+public class SinglePlayerGameScene extends AbstractGameScene{
 
-    private PhysicsWorld physicsWorld;
-    private Player player;
 
     private HUD gameHUD;
 
@@ -55,14 +53,12 @@ public class GameScene extends BaseScene {
 
     private Integer firstTimeCounter;
 
-    private Boolean multiplayer;
-
     /**
      * @param objects objects[0] - levelDifficulty
      *                objects[1] - mathParameter
      *                objects[2] - multiplayer
      */
-    public GameScene(Object... objects) {
+    public SinglePlayerGameScene(Object... objects) {
         super(objects);
     }
 
@@ -72,24 +68,19 @@ public class GameScene extends BaseScene {
         init(objects);
         createBackground();
         initAfterBackgroundCreation();
-        createPlayer();
         createHUD();
-        createPhysics();
     }
 
-    private void createPlayer() {
-        player = new Player(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_WIDTH / 2, vertexBufferObjectManager, camera);
-        attachChild(player);
-    }
+
 
     @Override
     public void onBackKeyPressed() {
-        SceneManager.getInstance().loadMenuSceneFrom(SceneType.GAME);
+        SceneManager.getInstance().loadMenuSceneFrom(SceneType.SINGLE_PLAYER_GAME);
     }
 
     @Override
     public SceneType getSceneType() {
-        return SceneType.GAME;
+        return SceneType.SINGLE_PLAYER_GAME;
     }
 
     @Override
@@ -98,6 +89,7 @@ public class GameScene extends BaseScene {
         camera.setHUD(null);
         camera.setCenter(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2);
         camera.setChaseEntity(null);
+        ResourcesManager.getInstance().unloadGameTextures();
     }
 
     private void init(Object... objects) {
@@ -111,7 +103,6 @@ public class GameScene extends BaseScene {
 
         levelDifficulty = (LevelDifficulty) objects[0];
         mathParameter = (MathParameter) objects[1];
-        multiplayer = (Boolean) objects[2];
 
         pool = new MathEquationPool(levelDifficulty, mathParameter);
         pool.batchAllocatePoolItems(ContextConstants.INITIAL_POOL_SIZE);
@@ -125,6 +116,11 @@ public class GameScene extends BaseScene {
         clearChildScene();
         attachChild(new Sprite(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2,
                 ResourcesManager.getInstance().getBackgroundGameTextureRegion(), vertexBufferObjectManager));
+        createInitialEquations();
+        createGreenButton();
+        createRedButton();
+        createLifeBar();
+        createScoreTexts();
 
     }
 
@@ -137,10 +133,6 @@ public class GameScene extends BaseScene {
         camera.setHUD(gameHUD);
     }
 
-    private void createPhysics() {
-        physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, -17), false);
-        registerUpdateHandler(physicsWorld);
-    }
 
     private ArrayDeque<MathEquationText> getEquationsTexts() {
         ArrayDeque<MathEquationText> result = new ArrayDeque<MathEquationText>();
@@ -296,7 +288,7 @@ public class GameScene extends BaseScene {
             highScoreService.unlockLevelUpFor(levelDifficulty, mathParameter);
         }
         resourcesManager.getWinSound().play();
-        SceneManager.getInstance().loadHighScoreSceneFrom(SceneType.GAME, score, levelDifficulty, mathParameter);
+        SceneManager.getInstance().loadHighScoreSceneFrom(SceneType.SINGLE_PLAYER_GAME, score, levelDifficulty, mathParameter);
     }
 
     private void endGameHalfWin() {

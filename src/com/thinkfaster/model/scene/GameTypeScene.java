@@ -1,6 +1,7 @@
 package com.thinkfaster.model.scene;
 
 import android.widget.Toast;
+import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.model.shape.GameTypeMenuItem;
 import com.thinkfaster.service.HighScoreService;
@@ -20,10 +21,9 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     private MenuScene menuScene;
     private HighScoreService highScoreService;
-    private Boolean multiplayer;
 
-    public GameTypeScene(boolean multiplayer) {
-        super(multiplayer);
+    public GameTypeScene() {
+        super();
     }
 
     @Override
@@ -45,7 +45,6 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     }
 
     private void init(Object... objects) {
-        multiplayer = (Boolean) objects[0];
         highScoreService = new HighScoreService();
     }
 
@@ -141,12 +140,13 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     @Override
     public void disposeScene() {
+        ResourcesManager.getInstance().unloadGameTypeTextures();
     }
 
     @Override
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
         if (highScoreService.isLevelUnlocked(((GameTypeMenuItem) pMenuItem).getLevelDifficulty(), ((GameTypeMenuItem) pMenuItem).getMathParameter())) {
-            SceneManager.getInstance().loadGameScene(((GameTypeMenuItem) pMenuItem).getLevelDifficulty(), ((GameTypeMenuItem) pMenuItem).getMathParameter(), multiplayer);
+            SceneManager.getInstance().loadGameScene(((GameTypeMenuItem) pMenuItem).getLevelDifficulty(), ((GameTypeMenuItem) pMenuItem).getMathParameter());
             return true;
         }
         return false;
