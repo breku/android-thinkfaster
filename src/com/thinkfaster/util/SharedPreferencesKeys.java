@@ -5,10 +5,9 @@ package com.thinkfaster.util;
  */
 public final class SharedPreferencesKeys {
 
-    private SharedPreferencesKeys(){
-
-    }
-
     public static final String REGISTRATION_ID = "registrationId";
     public static final String APP_VERSION = "appVersion";
+    private SharedPreferencesKeys() {
+
+    }
 }

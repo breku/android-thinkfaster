@@ -1,10 +1,12 @@
 package com.thinkfaster.model.scene;
 
-import com.badlogic.gdx.math.Vector2;
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.matcher.ClassTouchAreaMacher;
-import com.thinkfaster.model.shape.*;
+import com.thinkfaster.model.shape.GameButton;
+import com.thinkfaster.model.shape.LifeBar;
+import com.thinkfaster.model.shape.MathEquation;
+import com.thinkfaster.model.shape.MathEquationText;
 import com.thinkfaster.pool.MathEquationPool;
 import com.thinkfaster.service.HighScoreService;
 import com.thinkfaster.util.ContextConstants;
@@ -18,8 +20,6 @@ import org.andengine.entity.modifier.MoveByModifier;
 import org.andengine.entity.modifier.MoveYModifier;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
-import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
-import org.andengine.extension.physics.box2d.PhysicsWorld;
 
 import java.util.ArrayDeque;
 
@@ -27,7 +27,7 @@ import java.util.ArrayDeque;
  * User: Breku
  * Date: 21.09.13
  */
-public class SinglePlayerGameScene extends AbstractGameScene{
+public class SinglePlayerGameScene extends AbstractGameScene {
 
 
     private HUD gameHUD;
@@ -70,7 +70,6 @@ public class SinglePlayerGameScene extends AbstractGameScene{
         initAfterBackgroundCreation();
         createHUD();
     }
-
 
 
     @Override
@@ -133,17 +132,6 @@ public class SinglePlayerGameScene extends AbstractGameScene{
         camera.setHUD(gameHUD);
     }
 
-
-    private ArrayDeque<MathEquationText> getEquationsTexts() {
-        ArrayDeque<MathEquationText> result = new ArrayDeque<MathEquationText>();
-        for (IEntity entity : mChildren) {
-            if (entity instanceof MathEquationText) {
-                result.add((MathEquationText) entity);
-            }
-        }
-        return result;
-    }
-
     private void createInitialEquations() {
         for (int i = 0; i < 4; i++) {
             attachChild(new MathEquationText(400, i * 80 + 140, pool.obtainPoolItem()));
@@ -191,6 +179,16 @@ public class SinglePlayerGameScene extends AbstractGameScene{
         attachChild(textWrongClicks);
         attachChild(textNumberOfGoodClicks);
         attachChild(textNumberOfWrongClicks);
+    }
+
+    private ArrayDeque<MathEquationText> getEquationsTexts() {
+        ArrayDeque<MathEquationText> result = new ArrayDeque<MathEquationText>();
+        for (IEntity entity : mChildren) {
+            if (entity instanceof MathEquationText) {
+                result.add((MathEquationText) entity);
+            }
+        }
+        return result;
     }
 
     @Override

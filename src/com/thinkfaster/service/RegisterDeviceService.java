@@ -5,8 +5,6 @@ import android.content.Context;
 import android.util.Log;
 import com.thinkfaster.task.RegisterTask;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 /**
  * Created by brekol on 05.05.15.
  */
@@ -27,7 +25,7 @@ public class RegisterDeviceService {
             context = activity.getApplicationContext();
 //            String registrationId = myGooglePlayService.getRegistrationIdFromSharedPreferences(context);
 //            if (isBlank(registrationId)) {
-                new RegisterTask(context).execute();
+            new RegisterTask(context).execute();
 //            }
 
         } else {

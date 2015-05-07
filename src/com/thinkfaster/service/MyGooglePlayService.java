@@ -35,23 +35,6 @@ public class MyGooglePlayService {
         return true;
     }
 
-    private boolean appVersionChanged(SharedPreferences sharedPreferences, Context context) {
-        int registeredVersion = sharedPreferences.getInt(APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = getAppVersion(context);
-        return registeredVersion != currentVersion;
-    }
-
-    public static int getAppVersion(Context context) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: ", e);
-        }
-    }
-
     public String getRegistrationIdFromSharedPreferences(Context context) {
         Log.i(TAG, ">> get registration id from sharedPreferences called");
         final SharedPreferences sharedPreferences = getGCMPreferences(context);
@@ -70,5 +53,22 @@ public class MyGooglePlayService {
 
     public SharedPreferences getGCMPreferences(Context context) {
         return context.getSharedPreferences(MyActivity.class.getSimpleName(), Context.MODE_PRIVATE);
+    }
+
+    private boolean appVersionChanged(SharedPreferences sharedPreferences, Context context) {
+        int registeredVersion = sharedPreferences.getInt(APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        return registeredVersion != currentVersion;
+    }
+
+    public static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: ", e);
+        }
     }
 }

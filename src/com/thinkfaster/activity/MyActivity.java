@@ -79,24 +79,6 @@ public class MyActivity extends BaseGameActivity {
     }
 
     /**
-     * called 1
-     * @return
-     */
-    @Override
-    public EngineOptions onCreateEngineOptions() {
-        Log.i(TAG, ">> Creating engine options");
-        camera = new Camera(0, 0, ContextConstants.SCREEN_WIDTH, ContextConstants.SCREEN_HEIGHT);
-        EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), camera);
-        engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
-        engineOptions.getAudioOptions().setNeedsMusic(true);
-        engineOptions.getAudioOptions().setNeedsSound(true);
-        engineOptions.getRenderOptions().setDithering(true);
-        Log.i(TAG, "<< Creating engine options finished");
-        return engineOptions;
-    }
-
-
-    /**
      * called 2
      */
     @Override
@@ -127,7 +109,26 @@ public class MyActivity extends BaseGameActivity {
     }
 
     /**
+     * called 1
+     *
+     * @return
+     */
+    @Override
+    public EngineOptions onCreateEngineOptions() {
+        Log.i(TAG, ">> Creating engine options");
+        camera = new Camera(0, 0, ContextConstants.SCREEN_WIDTH, ContextConstants.SCREEN_HEIGHT);
+        EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), camera);
+        engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
+        engineOptions.getAudioOptions().setNeedsMusic(true);
+        engineOptions.getAudioOptions().setNeedsSound(true);
+        engineOptions.getRenderOptions().setDithering(true);
+        Log.i(TAG, "<< Creating engine options finished");
+        return engineOptions;
+    }
+
+    /**
      * called 3, inside onCreateScene is called, it finishes after onCreateScene finishes
+     *
      * @param pOnCreateResourcesCallback
      * @throws IOException
      */
@@ -142,6 +143,7 @@ public class MyActivity extends BaseGameActivity {
 
     /**
      * called from onCreateResources
+     *
      * @param pOnCreateSceneCallback
      * @throws IOException
      */
@@ -156,6 +158,7 @@ public class MyActivity extends BaseGameActivity {
 
     /**
      * called from onCreateScene
+     *
      * @param pScene
      * @param pOnPopulateSceneCallback
      * @throws IOException

@@ -13,7 +13,6 @@ public class DeviceParameters {
     }
 
 
-
     public String getRegistrationId() {
         return registrationId;
     }

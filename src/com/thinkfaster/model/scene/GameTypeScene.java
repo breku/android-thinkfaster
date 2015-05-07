@@ -35,15 +35,6 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         gameToast("aaaa");
     }
 
-    private void gameToast(final String msg) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     private void init(Object... objects) {
         highScoreService = new HighScoreService();
     }
@@ -83,6 +74,15 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
         setChildScene(menuScene);
 
+    }
+
+    private void gameToast(final String msg) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void createStars(Integer positionX, Integer positionY, LevelDifficulty levelDifficulty, MathParameter mathParameter) {

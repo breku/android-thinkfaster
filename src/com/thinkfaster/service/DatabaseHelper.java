@@ -43,6 +43,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return count > 0;
+    }
+
+    public Integer getHighScoresFor(LevelDifficulty levelDifficulty, MathParameter mathParameter) {
+        Integer result = null;
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_SCORE + " FROM " + TABLE_NAME + " WHERE " + COLUMN_LEVEL_DIFFICULTY + " = ? AND " + COLUMN_MATH_PARAMETER + " = ?",
+                new String[]{levelDifficulty.name(), mathParameter.name()});
+        while (cursor.moveToNext()) {
+            result = cursor.getInt(0);
+        }
+        cursor.close();
+        database.close();
+        return result;
     }    /**
      * Called when database does not exists
      *
@@ -60,17 +73,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createDefaultHighScoreValues(sqLiteDatabase);
     }
 
-    public Integer getHighScoresFor(LevelDifficulty levelDifficulty, MathParameter mathParameter) {
-        Integer result = null;
-        SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " + COLUMN_SCORE + " FROM " + TABLE_NAME + " WHERE " + COLUMN_LEVEL_DIFFICULTY + " = ? AND " + COLUMN_MATH_PARAMETER + " = ?",
-                new String[]{levelDifficulty.name(), mathParameter.name()});
-        while (cursor.moveToNext()) {
-            result = cursor.getInt(0);
-        }
-        cursor.close();
+    public void updateRecordFor(LevelDifficulty levelDifficulty, MathParameter mathParameter, Integer score) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.execSQL("UPDATE HIGH_SCORES SET SCORE = ? WHERE LEVEL_DIFFICULTY = ? AND MATH_PARAMETER = ?", new Object[]{score, levelDifficulty.name(), mathParameter.name()});
         database.close();
-        return result;
+    }
+
+    public void unlockLevel(LevelDifficulty levelDifficulty, MathParameter mathParameter) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.execSQL("UPDATE HIGH_SCORES SET LOCKED = 0 WHERE LEVEL_DIFFICULTY = ? AND MATH_PARAMETER = ?", new String[]{levelDifficulty.name(), mathParameter.name()});
+        database.close();
     }    /**
      * Is called when DATABASE_VERSION is upgraded
      *
@@ -84,17 +96,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public void updateRecordFor(LevelDifficulty levelDifficulty, MathParameter mathParameter, Integer score) {
-        SQLiteDatabase database = getWritableDatabase();
-        database.execSQL("UPDATE HIGH_SCORES SET SCORE = ? WHERE LEVEL_DIFFICULTY = ? AND MATH_PARAMETER = ?", new Object[]{score, levelDifficulty.name(), mathParameter.name()});
+    public boolean isLevelUnlocked(LevelDifficulty levelDifficulty, MathParameter mathParameter) {
+        Integer result = null;
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_LOCKED + " FROM " + TABLE_NAME + " WHERE " + COLUMN_LEVEL_DIFFICULTY + " = ? AND " + COLUMN_MATH_PARAMETER + " = ?",
+                new String[]{levelDifficulty.name(), mathParameter.name()});
+        while (cursor.moveToNext()) {
+            result = cursor.getInt(0);
+        }
+        cursor.close();
         database.close();
+        return result == 0;
     }
 
-    public void unlockLevel(LevelDifficulty levelDifficulty, MathParameter mathParameter) {
-        SQLiteDatabase database = getWritableDatabase();
-        database.execSQL("UPDATE HIGH_SCORES SET LOCKED = 0 WHERE LEVEL_DIFFICULTY = ? AND MATH_PARAMETER = ?", new String[]{levelDifficulty.name(), mathParameter.name()});
-        database.close();
-    }    private void createDefaultHighScoreValues(SQLiteDatabase sqLiteDatabase) {
+
+
+    private void createDefaultHighScoreValues(SQLiteDatabase sqLiteDatabase) {
 
         createDefaultHighScoreRecord(sqLiteDatabase, LevelDifficulty.EASY, MathParameter.ADD, 0);
         createDefaultHighScoreRecord(sqLiteDatabase, LevelDifficulty.EASY, MathParameter.SUB, 1);
@@ -115,18 +132,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createDefaultHighScoreRecord(sqLiteDatabase, LevelDifficulty.HARD, MathParameter.ALL, 1);
     }
 
-    public boolean isLevelUnlocked(LevelDifficulty levelDifficulty, MathParameter mathParameter) {
-        Integer result = null;
-        SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " + COLUMN_LOCKED + " FROM " + TABLE_NAME + " WHERE " + COLUMN_LEVEL_DIFFICULTY + " = ? AND " + COLUMN_MATH_PARAMETER + " = ?",
-                new String[]{levelDifficulty.name(), mathParameter.name()});
-        while (cursor.moveToNext()) {
-            result = cursor.getInt(0);
-        }
-        cursor.close();
-        database.close();
-        return result == 0;
-    }    private void createDefaultHighScoreRecord(SQLiteDatabase sqLiteDatabase, LevelDifficulty levelDifficulty, MathParameter mathParameter, Integer locked) {
+
+
+    private void createDefaultHighScoreRecord(SQLiteDatabase sqLiteDatabase, LevelDifficulty levelDifficulty, MathParameter mathParameter, Integer locked) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(COLUMN_LEVEL_DIFFICULTY, levelDifficulty.name());
@@ -136,12 +144,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
 
     }
-
-
-
-
-
-
 
 
 }

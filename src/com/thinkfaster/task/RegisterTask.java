@@ -20,17 +20,16 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
  */
 public class RegisterTask extends AsyncTask<String, Void, String> {
 
+    private static final String TAG = "RegisterTask";
     private final Context context;
-
     private MyGooglePlayService myGooglePlayService = new MyGooglePlayService();
     private GoogleCloudMessaging gcm;
-
     private JsonRegisterService jsonRegisterService = new JsonRegisterService();
+
 
     public RegisterTask(Context context) {
         this.context = context;
     }
-
 
     @Override
     protected String doInBackground(String... strings) {
@@ -55,8 +54,11 @@ public class RegisterTask extends AsyncTask<String, Void, String> {
         return EMPTY;
     }
 
-    private static final String TAG = "RegisterTask";
-
+    private void sendRegistrationIdToServer(String registrationId) {
+        Log.i(TAG, ">> Sending registrationId to server");
+        jsonRegisterService.sendRegistrationIdToServer(registrationId);
+        Log.i(TAG, "<< Sending registrationId to server finished");
+    }
 
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = myGooglePlayService.getGCMPreferences(context);
@@ -66,12 +68,6 @@ public class RegisterTask extends AsyncTask<String, Void, String> {
         editor.putString(REGISTRATION_ID, regId);
         editor.putInt(APP_VERSION, appVersion);
         editor.commit();
-    }
-
-    private void sendRegistrationIdToServer(String registrationId) {
-        Log.i(TAG, ">> Sending registrationId to server");
-        jsonRegisterService.sendRegistrationIdToServer(registrationId);
-        Log.i(TAG, "<< Sending registrationId to server finished");
     }
 
     @Override
