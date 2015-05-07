@@ -38,7 +38,7 @@
         <activity android:name="com.thinkfaster.activity.MyActivity"
                   android:label="@string/app_name"
                   android:screenOrientation="landscape"
-                  android:configChanges="keyboard|keyboardHidden|orientation|smallestScreenSize"
+                  android:configChanges="keyboard|keyboardHidden|orientation|smallestScreenSize|screenLayout|uiMode|screenSize"
                   android:theme="@style/Theme.NoBackground">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

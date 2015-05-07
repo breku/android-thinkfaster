@@ -21,6 +21,8 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
     private final int ABOUT = 2;
     private final int EXIT = 3;
     private final int RECORDS = 4;
+    private final int OPTIONS = 5;
+
     private MenuScene menuScene;
     private RegisterDeviceService registerDeviceService = new RegisterDeviceService(activity);
 
@@ -28,41 +30,6 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
     public void createScene(Object... objects) {
         createBackground();
         createButtons();
-    }
-
-    private void createBackground() {
-        attachChild(new Sprite(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2, resourcesManager.getMenuBackgroundTextureRegion(), vertexBufferObjectManager));
-    }
-
-    private void createButtons() {
-        menuScene = new MenuScene(camera);
-        menuScene.setPosition(0, 0);
-
-        final IMenuItem newGameItem = new ScaleMenuItemDecorator(new SpriteMenuItem(NEW_GAME, ResourcesManager.getInstance().getButtonNewGameTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
-        final IMenuItem aboutItem = new ScaleMenuItemDecorator(new SpriteMenuItem(ABOUT, ResourcesManager.getInstance().getButtonAboutTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
-        final IMenuItem multiplayerItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MULTIPLAYER, ResourcesManager.getInstance().getButtonMultiplayerTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
-        final IMenuItem exitItem = new ScaleMenuItemDecorator(new SpriteMenuItem(EXIT, ResourcesManager.getInstance().getButtonExitTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
-        final IMenuItem recordsItem = new ScaleMenuItemDecorator(new SpriteMenuItem(RECORDS, ResourcesManager.getInstance().getButtonHighScoreTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
-
-        menuScene.addMenuItem(newGameItem);
-        menuScene.addMenuItem(multiplayerItem);
-        menuScene.addMenuItem(aboutItem);
-        menuScene.addMenuItem(exitItem);
-        menuScene.addMenuItem(recordsItem);
-
-        menuScene.buildAnimations();
-        menuScene.setBackgroundEnabled(false);
-
-        newGameItem.setPosition(210, 397);
-        multiplayerItem.setPosition(210, 327);
-        recordsItem.setPosition(210, 257);
-        aboutItem.setPosition(210, 187);
-        exitItem.setPosition(210, 117);
-
-        menuScene.setOnMenuItemClickListener(this);
-
-        setChildScene(menuScene);
-
     }
 
     @Override
@@ -98,9 +65,52 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
             case RECORDS:
                 SceneManager.getInstance().loadHighScoreSceneFrom(SceneType.MENU, null, null, null);
                 break;
+            case OPTIONS:
+                SceneManager.getInstance().loadOptionsScene();
+                break;
             default:
                 return false;
         }
         return false;
     }
+
+    private void createBackground() {
+        attachChild(new Sprite(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2, resourcesManager.getMenuBackgroundTextureRegion(), vertexBufferObjectManager));
+    }
+
+    private void createButtons() {
+        menuScene = new MenuScene(camera);
+        menuScene.setPosition(0, 0);
+
+        final IMenuItem newGameItem = new ScaleMenuItemDecorator(new SpriteMenuItem(NEW_GAME, ResourcesManager.getInstance().getButtonNewGameTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem aboutItem = new ScaleMenuItemDecorator(new SpriteMenuItem(ABOUT, ResourcesManager.getInstance().getButtonAboutTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem multiplayerItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MULTIPLAYER, ResourcesManager.getInstance().getButtonMultiplayerTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem exitItem = new ScaleMenuItemDecorator(new SpriteMenuItem(EXIT, ResourcesManager.getInstance().getButtonExitTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem recordsItem = new ScaleMenuItemDecorator(new SpriteMenuItem(RECORDS, ResourcesManager.getInstance().getButtonHighScoreTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem optionsItem = new ScaleMenuItemDecorator(new SpriteMenuItem(OPTIONS, ResourcesManager.getInstance().getButtonOptionsTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+
+
+        menuScene.addMenuItem(newGameItem);
+        menuScene.addMenuItem(multiplayerItem);
+        menuScene.addMenuItem(aboutItem);
+        menuScene.addMenuItem(exitItem);
+        menuScene.addMenuItem(recordsItem);
+        menuScene.addMenuItem(optionsItem);
+
+        menuScene.buildAnimations();
+        menuScene.setBackgroundEnabled(false);
+
+        newGameItem.setPosition(210, 397);
+        multiplayerItem.setPosition(210, 327);
+        recordsItem.setPosition(210, 257);
+        aboutItem.setPosition(210, 187);
+        exitItem.setPosition(210, 117);
+        optionsItem.setPosition(210, 47);
+
+        menuScene.setOnMenuItemClickListener(this);
+
+        setChildScene(menuScene);
+
+    }
+
 }

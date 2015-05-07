@@ -23,6 +23,8 @@ import org.andengine.entity.text.Text;
 
 import java.util.ArrayDeque;
 
+import static com.thinkfaster.util.ContextConstants.INITIAL_POOL_SIZE;
+
 /**
  * User: Breku
  * Date: 21.09.13
@@ -104,7 +106,7 @@ public class SinglePlayerGameScene extends AbstractGameScene {
         mathParameter = (MathParameter) objects[1];
 
         pool = new MathEquationPool(levelDifficulty, mathParameter);
-        pool.batchAllocatePoolItems(ContextConstants.INITIAL_POOL_SIZE);
+        pool.batchAllocatePoolItems(INITIAL_POOL_SIZE);
 
         highScoreService = new HighScoreService();
 

@@ -1,5 +1,6 @@
 package com.thinkfaster.service;
 
+import com.thinkfaster.service.database.DatabaseHelper;
 import com.thinkfaster.util.LevelDifficulty;
 import com.thinkfaster.util.MathParameter;
 
@@ -9,7 +10,7 @@ import com.thinkfaster.util.MathParameter;
  */
 public class HighScoreService extends BaseService {
 
-    DatabaseHelper databaseHelper = new DatabaseHelper(activity);
+    private DatabaseHelper databaseHelper = new DatabaseHelper(activity);
 
     public Integer getHighScoresFor(LevelDifficulty levelDifficulty, MathParameter mathParameter) {
         return databaseHelper.getHighScoresFor(levelDifficulty, mathParameter);

@@ -5,10 +5,12 @@ import android.content.Context;
 import android.util.Log;
 import com.thinkfaster.task.RegisterTask;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 /**
  * Created by brekol on 05.05.15.
  */
-public class RegisterDeviceService {
+public class RegisterDeviceService{
 
     private static final String TAG = "RegisterService";
     private final Activity activity;
@@ -23,10 +25,10 @@ public class RegisterDeviceService {
         Log.i(TAG, ">> Registering device");
         if (myGooglePlayService.checkPlayServices(activity)) {
             context = activity.getApplicationContext();
-//            String registrationId = myGooglePlayService.getRegistrationIdFromSharedPreferences(context);
-//            if (isBlank(registrationId)) {
-            new RegisterTask(context).execute();
-//            }
+            String registrationId = myGooglePlayService.getRegistrationIdFromSharedPreferences(context);
+            if (isBlank(registrationId)) {
+                new RegisterTask(context).execute();
+            }
 
         } else {
             Log.w(TAG, "No valid Google Play Services APK found.");

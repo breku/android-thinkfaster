@@ -1,12 +1,18 @@
-package com.thinkfaster.service;
+package com.thinkfaster.service.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.thinkfaster.model.json.DeviceParameters;
+import com.thinkfaster.service.DeviceParametersService;
 import com.thinkfaster.util.LevelDifficulty;
 import com.thinkfaster.util.MathParameter;
+import org.apache.commons.lang3.StringUtils;
+
+import static com.thinkfaster.service.DeviceParametersService.getDeviceName;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * User: Breku
@@ -15,40 +21,60 @@ import com.thinkfaster.util.MathParameter;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "myDB_brain_watt";
-    private static final String TABLE_NAME = "HIGH_SCORES";
+    private static final String HIGH_SCORES_TABLE_NAME = "HIGH_SCORES";
     private static final String COLUMN_ID = "ID";
     private static final String COLUMN_LEVEL_DIFFICULTY = "LEVEL_DIFFICULTY";
     private static final String COLUMN_MATH_PARAMETER = "MATH_PARAMETER";
     private static final String COLUMN_SCORE = "SCORE";
     private static final String COLUMN_LOCKED = "LOCKED";
-    private static final int DATABASE_VERSION = 23;
+
+    private static final String OPTIONS_TABLE_NAME = "OPTIONS";
+    private static final String COLUMN_USERNAME = "USERNAME";
+
+    private static final int DATABASE_VERSION = 25;
 
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DATABASE_VERSION);
     }
 
-    private boolean isTableExists(String tableName) {
-        SQLiteDatabase db = getReadableDatabase();
-        if (tableName == null || db == null || !db.isOpen()) {
-            return false;
-        }
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type = ? AND name = ?", new String[]{"table", tableName});
-        if (!cursor.moveToFirst()) {
-            cursor.close();
-            db.close();
-            return false;
-        }
-        int count = cursor.getInt(0);
-        cursor.close();
-        db.close();
-        return count > 0;
+    /**
+     * Called when database does not exists
+     *
+     * @param sqLiteDatabase
+     */
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        createScoreTable(sqLiteDatabase);
+        createOptionsTable(sqLiteDatabase);
+        createDefaultHighScoreValues(sqLiteDatabase);
+        createDefaultOptions(sqLiteDatabase);
+    }
+
+    private void createDefaultOptions(SQLiteDatabase sqLiteDatabase) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_USERNAME, getDeviceName());
+        sqLiteDatabase.insert(OPTIONS_TABLE_NAME, null, contentValues);
+    }
+
+    /**
+     * Is called when DATABASE_VERSION is upgraded
+     *
+     * @param sqLiteDatabase
+     * @param i
+     * @param i1
+     */
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + HIGH_SCORES_TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + OPTIONS_TABLE_NAME);
+        onCreate(sqLiteDatabase);
     }
 
     public Integer getHighScoresFor(LevelDifficulty levelDifficulty, MathParameter mathParameter) {
         Integer result = null;
         SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " + COLUMN_SCORE + " FROM " + TABLE_NAME + " WHERE " + COLUMN_LEVEL_DIFFICULTY + " = ? AND " + COLUMN_MATH_PARAMETER + " = ?",
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_SCORE + " FROM " + HIGH_SCORES_TABLE_NAME + " WHERE " + COLUMN_LEVEL_DIFFICULTY + " = ? AND " + COLUMN_MATH_PARAMETER + " = ?",
                 new String[]{levelDifficulty.name(), mathParameter.name()});
         while (cursor.moveToNext()) {
             result = cursor.getInt(0);
@@ -56,21 +82,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         database.close();
         return result;
-    }    /**
-     * Called when database does not exists
-     *
-     * @param sqLiteDatabase
-     */
-    @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
-                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "LEVEL_DIFFICULTY TEXT, " +
-                "MATH_PARAMETER TEXT, " +
-                "SCORE INTEGER, " +
-                "LOCKED INTEGER" +
-                ")");
-        createDefaultHighScoreValues(sqLiteDatabase);
     }
 
     public void updateRecordFor(LevelDifficulty levelDifficulty, MathParameter mathParameter, Integer score) {
@@ -83,23 +94,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase database = getWritableDatabase();
         database.execSQL("UPDATE HIGH_SCORES SET LOCKED = 0 WHERE LEVEL_DIFFICULTY = ? AND MATH_PARAMETER = ?", new String[]{levelDifficulty.name(), mathParameter.name()});
         database.close();
-    }    /**
-     * Is called when DATABASE_VERSION is upgraded
-     *
-     * @param sqLiteDatabase
-     * @param i
-     * @param i1
-     */
-    @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        onCreate(sqLiteDatabase);
     }
 
     public boolean isLevelUnlocked(LevelDifficulty levelDifficulty, MathParameter mathParameter) {
         Integer result = null;
         SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " + COLUMN_LOCKED + " FROM " + TABLE_NAME + " WHERE " + COLUMN_LEVEL_DIFFICULTY + " = ? AND " + COLUMN_MATH_PARAMETER + " = ?",
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_LOCKED + " FROM " + HIGH_SCORES_TABLE_NAME + " WHERE " + COLUMN_LEVEL_DIFFICULTY + " = ? AND " + COLUMN_MATH_PARAMETER + " = ?",
                 new String[]{levelDifficulty.name(), mathParameter.name()});
         while (cursor.moveToNext()) {
             result = cursor.getInt(0);
@@ -110,6 +110,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    public void updateUsername(String username) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.execSQL("UPDATE OPTIONS SET USERNAME = ?", new String[]{username});
+        database.close();
+    }
+
+    public String getUsername() {
+        String result = EMPTY;
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT USERNAME FROM " + OPTIONS_TABLE_NAME, new String[]{});
+        while (cursor.moveToNext()) {
+            result = cursor.getString(0);
+        }
+        cursor.close();
+        database.close();
+        return result;
+    }
+
+    private void createScoreTable(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + HIGH_SCORES_TABLE_NAME + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "LEVEL_DIFFICULTY TEXT, " +
+                "MATH_PARAMETER TEXT, " +
+                "SCORE INTEGER, " +
+                "LOCKED INTEGER" +
+                ")");
+    }
+
+    private void createOptionsTable(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + OPTIONS_TABLE_NAME + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "USERNAME TEXT" +
+                ")");
+    }
 
     private void createDefaultHighScoreValues(SQLiteDatabase sqLiteDatabase) {
 
@@ -133,7 +167,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
     private void createDefaultHighScoreRecord(SQLiteDatabase sqLiteDatabase, LevelDifficulty levelDifficulty, MathParameter mathParameter, Integer locked) {
         ContentValues contentValues = new ContentValues();
 
@@ -141,7 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_MATH_PARAMETER, mathParameter.name());
         contentValues.put(COLUMN_SCORE, 0);
         contentValues.put(COLUMN_LOCKED, locked);
-        sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
+        sqLiteDatabase.insert(HIGH_SCORES_TABLE_NAME, null, contentValues);
 
     }
 
