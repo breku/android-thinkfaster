@@ -32,7 +32,6 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         createBackground();
         createButtons();
 
-        gameToast("aaaa");
     }
 
     private void init(Object... objects) {
@@ -76,14 +75,6 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     }
 
-    private void gameToast(final String msg) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void createStars(Integer positionX, Integer positionY, LevelDifficulty levelDifficulty, MathParameter mathParameter) {
         Integer score = highScoreService.getHighScoresFor(levelDifficulty, mathParameter);

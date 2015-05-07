@@ -3,6 +3,7 @@ package com.thinkfaster.model.scene;
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.service.RegisterDeviceService;
+import com.thinkfaster.service.validator.DeviceValidator;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
 import org.andengine.entity.scene.menu.MenuScene;
@@ -25,6 +26,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     private MenuScene menuScene;
     private RegisterDeviceService registerDeviceService = new RegisterDeviceService(activity);
+    private DeviceValidator deviceValidator = new DeviceValidator();
 
     @Override
     public void createScene(Object... objects) {
@@ -54,8 +56,9 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 SceneManager.getInstance().loadGameTypeScene();
                 break;
             case MULTIPLAYER:
-                registerDeviceService.registerDevice();
-                SceneManager.getInstance().loadGameTypeScene();
+                if (deviceValidator.validateInternetConnection() && deviceValidator.validateRegistrationId()) {
+                    SceneManager.getInstance().loadGameTypeScene();
+                }
                 break;
             case ABOUT:
                 SceneManager.getInstance().loadAboutScene();

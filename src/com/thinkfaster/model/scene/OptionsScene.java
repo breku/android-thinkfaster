@@ -9,7 +9,6 @@ import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.matcher.ClassIEntityMatcher;
 import com.thinkfaster.service.OptionsService;
 import com.thinkfaster.util.SceneType;
-import org.andengine.entity.IEntity;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.TextMenuItem;
@@ -17,10 +16,8 @@ import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 
-import static com.thinkfaster.service.DeviceParametersService.getDeviceName;
 import static com.thinkfaster.util.ContextConstants.SCREEN_HEIGHT;
 import static com.thinkfaster.util.ContextConstants.SCREEN_WIDTH;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -40,7 +37,6 @@ public class OptionsScene extends BaseScene implements MenuScene.IOnMenuItemClic
         createBackground();
         createLeftSideMenuLabels();
         createRightSideMenuValues();
-
     }
 
     @Override
@@ -82,11 +78,6 @@ public class OptionsScene extends BaseScene implements MenuScene.IOnMenuItemClic
         alert.show();
     }
 
-    private void updateUsernameOnScreen(String username) {
-        Text usernameText = (Text) getChildByMatcher(new ClassIEntityMatcher(Text.class));
-        usernameText.setText(username);
-    }
-
     @Override
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
 
@@ -98,6 +89,11 @@ public class OptionsScene extends BaseScene implements MenuScene.IOnMenuItemClic
                 return false;
         }
         return false;
+    }
+
+    private void updateUsernameOnScreen(String username) {
+        Text usernameText = (Text) getChildByMatcher(new ClassIEntityMatcher(Text.class));
+        usernameText.setText(username);
     }
 
     private void createRightSideMenuValues() {

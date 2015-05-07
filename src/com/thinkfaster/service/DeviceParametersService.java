@@ -1,13 +1,31 @@
 package com.thinkfaster.service;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
+import com.thinkfaster.manager.ResourcesManager;
+import org.andengine.ui.activity.BaseGameActivity;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 /**
  * Created by brekol on 07.05.15.
  */
-public class DeviceParametersService {
+public final class DeviceParametersService {
+
+    private DeviceParametersService() {
+
+    }
+
+    public static boolean isOnline() {
+        BaseGameActivity activity = ResourcesManager.getInstance().getActivity();
+        ConnectivityManager cm =
+                (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
 
     public static String getDeviceName() {
         final String manufacturer = Build.MANUFACTURER;

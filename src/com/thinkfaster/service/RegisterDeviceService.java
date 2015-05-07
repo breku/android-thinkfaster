@@ -19,12 +19,16 @@ public class RegisterDeviceService{
 
     public RegisterDeviceService(Activity activity) {
         this.activity = activity;
+        this.context = activity.getApplicationContext();
+    }
+
+    public String getRegistrationId(){
+        return myGooglePlayService.getRegistrationIdFromSharedPreferences(context);
     }
 
     public void registerDevice() {
         Log.i(TAG, ">> Registering device");
         if (myGooglePlayService.checkPlayServices(activity)) {
-            context = activity.getApplicationContext();
             String registrationId = myGooglePlayService.getRegistrationIdFromSharedPreferences(context);
             if (isBlank(registrationId)) {
                 new RegisterTask(context).execute();
