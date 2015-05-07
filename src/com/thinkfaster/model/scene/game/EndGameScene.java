@@ -1,7 +1,8 @@
-package com.thinkfaster.model.scene;
+package com.thinkfaster.model.scene.game;
 
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
+import com.thinkfaster.model.scene.BaseScene;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
 import org.andengine.entity.scene.IOnSceneTouchListener;
@@ -38,7 +39,7 @@ public class EndGameScene extends BaseScene implements IOnSceneTouchListener {
 
     @Override
     public void onBackKeyPressed() {
-        SceneManager.getInstance().loadMenuSceneFrom(SceneType.ENDGAME);
+        SceneManager.getInstance().loadMenuScene(this);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class EndGameScene extends BaseScene implements IOnSceneTouchListener {
     @Override
     public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
         if (pSceneTouchEvent.isActionUp()) {
-            SceneManager.getInstance().loadMenuSceneFrom(SceneType.ENDGAME);
+            SceneManager.getInstance().loadMenuScene(this);
         }
         return false;
     }

@@ -1,8 +1,9 @@
-package com.thinkfaster.model.scene;
+package com.thinkfaster.model.scene.game;
 
 import android.widget.Toast;
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
+import com.thinkfaster.model.scene.BaseScene;
 import com.thinkfaster.model.shape.GameTypeMenuItem;
 import com.thinkfaster.service.HighScoreService;
 import com.thinkfaster.util.ContextConstants;
@@ -121,7 +122,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     @Override
     public void onBackKeyPressed() {
-        SceneManager.getInstance().loadMenuSceneFrom(SceneType.GAMETYPE);
+        SceneManager.getInstance().loadMenuScene(this);
     }
 
     @Override

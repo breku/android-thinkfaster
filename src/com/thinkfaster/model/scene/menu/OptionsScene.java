@@ -1,4 +1,4 @@
-package com.thinkfaster.model.scene;
+package com.thinkfaster.model.scene.menu;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.widget.EditText;
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.matcher.ClassIEntityMatcher;
+import com.thinkfaster.model.scene.BaseScene;
 import com.thinkfaster.service.OptionsService;
 import com.thinkfaster.util.SceneType;
 import org.andengine.entity.scene.menu.MenuScene;
@@ -41,7 +42,7 @@ public class OptionsScene extends BaseScene implements MenuScene.IOnMenuItemClic
 
     @Override
     public void onBackKeyPressed() {
-        SceneManager.getInstance().loadMenuSceneFrom(SceneType.OPTIONS);
+        SceneManager.getInstance().loadMenuScene(this);
     }
 
     @Override

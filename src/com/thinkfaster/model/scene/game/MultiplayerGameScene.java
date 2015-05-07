@@ -1,4 +1,4 @@
-package com.thinkfaster.model.scene;
+package com.thinkfaster.model.scene.game;
 
 import com.thinkfaster.util.SceneType;
 

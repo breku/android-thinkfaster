@@ -1,4 +1,4 @@
-package com.thinkfaster.model.scene;
+package com.thinkfaster.model.scene.game;
 
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
@@ -76,7 +76,7 @@ public class SinglePlayerGameScene extends AbstractGameScene {
 
     @Override
     public void onBackKeyPressed() {
-        SceneManager.getInstance().loadMenuSceneFrom(SceneType.SINGLE_PLAYER_GAME);
+        SceneManager.getInstance().loadMenuScene(this);
     }
 
     @Override

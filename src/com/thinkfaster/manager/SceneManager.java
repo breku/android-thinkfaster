@@ -1,6 +1,13 @@
 package com.thinkfaster.manager;
 
 import com.thinkfaster.model.scene.*;
+import com.thinkfaster.model.scene.game.EndGameScene;
+import com.thinkfaster.model.scene.game.GameTypeScene;
+import com.thinkfaster.model.scene.game.SinglePlayerGameScene;
+import com.thinkfaster.model.scene.menu.AboutScene;
+import com.thinkfaster.model.scene.menu.HighScoreScene;
+import com.thinkfaster.model.scene.menu.MainMenuScene;
+import com.thinkfaster.model.scene.menu.OptionsScene;
 import com.thinkfaster.service.AdvertService;
 import com.thinkfaster.util.*;
 import org.andengine.engine.handler.timer.ITimerCallback;
@@ -77,28 +84,10 @@ public class SceneManager {
         });
     }
 
-    public void loadMenuSceneFrom(SceneType sceneType) {
+
+    public  void loadMenuScene(BaseScene scene){
         setScene(loadingScene);
-        switch (sceneType) {
-            case ABOUT:
-                aboutScene.disposeScene();
-                break;
-            case SINGLE_PLAYER_GAME:
-                singlePlayerGameScene.disposeScene();
-                break;
-            case OPTIONS:
-                optionsScene.disposeScene();
-                break;
-            case ENDGAME:
-                endGameScene.disposeScene();
-                break;
-            case RECORDS:
-                recordScene.disposeScene();
-                break;
-            case GAMETYPE:
-                gameTypeScene.disposeScene();
-                break;
-        }
+        scene.disposeScene();
         ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.LOADING_SCENE_TIME, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
@@ -110,14 +99,14 @@ public class SceneManager {
         }));
     }
 
-    public void loadMultiplayerScene() {
-
-    }
-
     public void loadGameTypeScene() {
         gameTypeScene = new GameTypeScene();
         setScene(gameTypeScene);
         ResourcesManager.getInstance().unloadMenuTextures();
+    }
+
+    public void loadMultiplayerScene() {
+
     }
 
     public void loadGameScene(final LevelDifficulty levelDifficulty, final MathParameter mathParameter) {
