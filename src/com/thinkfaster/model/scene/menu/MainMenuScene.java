@@ -3,7 +3,7 @@ package com.thinkfaster.model.scene.menu;
 import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.model.scene.BaseScene;
-import com.thinkfaster.service.RegisterDeviceService;
+import com.thinkfaster.service.server.RegisterDeviceService;
 import com.thinkfaster.service.validator.DeviceValidator;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
@@ -58,7 +58,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 break;
             case MULTIPLAYER:
                 if (deviceValidator.validateInternetConnection() && deviceValidator.validateRegistrationId()) {
-                    SceneManager.getInstance().loadMultiplayerScene();
+                    SceneManager.getInstance().loadWaitingRoomScene();
                 }
                 break;
             case ABOUT:

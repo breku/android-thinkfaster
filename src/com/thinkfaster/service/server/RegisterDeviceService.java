@@ -1,4 +1,4 @@
-package com.thinkfaster.service;
+package com.thinkfaster.service.server;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * Created by brekol on 05.05.15.
  */
-public class RegisterDeviceService{
+public class RegisterDeviceService {
 
     private static final String TAG = "RegisterService";
     private final Activity activity;
@@ -22,7 +22,7 @@ public class RegisterDeviceService{
         this.context = activity.getApplicationContext();
     }
 
-    public String getRegistrationId(){
+    public String getRegistrationId() {
         return myGooglePlayService.getRegistrationIdFromSharedPreferences(context);
     }
 

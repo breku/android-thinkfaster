@@ -1,4 +1,4 @@
-package com.thinkfaster.service;
+package com.thinkfaster.service.server;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,12 +21,18 @@ public class MyGooglePlayService {
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MyGooglePlayService";
 
-    public boolean checkPlayServices(Activity activity) {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
+    public boolean checkPlayServices(final Activity activity) {
+        final int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, activity,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        GooglePlayServicesUtil.getErrorDialog(resultCode, activity,
+                                PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                    }
+                });
+
             } else {
                 Log.w(TAG, "<< This device is not supported.");
             }
@@ -55,12 +61,6 @@ public class MyGooglePlayService {
         return context.getSharedPreferences(MyActivity.class.getSimpleName(), Context.MODE_PRIVATE);
     }
 
-    private boolean appVersionChanged(SharedPreferences sharedPreferences, Context context) {
-        int registeredVersion = sharedPreferences.getInt(APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = getAppVersion(context);
-        return registeredVersion != currentVersion;
-    }
-
     public static int getAppVersion(Context context) {
         try {
             PackageInfo packageInfo = context.getPackageManager()
@@ -70,5 +70,11 @@ public class MyGooglePlayService {
             // should never happen
             throw new RuntimeException("Could not get package name: ", e);
         }
+    }
+
+    private boolean appVersionChanged(SharedPreferences sharedPreferences, Context context) {
+        int registeredVersion = sharedPreferences.getInt(APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        return registeredVersion != currentVersion;
     }
 }

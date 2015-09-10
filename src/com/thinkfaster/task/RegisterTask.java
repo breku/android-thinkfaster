@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.thinkfaster.service.JsonRegisterService;
-import com.thinkfaster.service.MyGooglePlayService;
+import com.thinkfaster.service.server.JsonRegisterService;
+import com.thinkfaster.service.server.MyGooglePlayService;
 
 import java.io.IOException;
 

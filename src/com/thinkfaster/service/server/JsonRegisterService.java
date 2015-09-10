@@ -1,4 +1,4 @@
-package com.thinkfaster.service;
+package com.thinkfaster.service.server;
 
 import android.util.Log;
 import com.google.gson.Gson;

@@ -34,5 +34,11 @@ public class ContextConstants implements Constants, LevelConstants {
 
     public static final String SENDER_ID = "76038150616";
 
+    public static final String HOST = "10.0.2.2";
+
+    public static final String PORT = "8080";
+
+
+
 
 }

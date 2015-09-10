@@ -1,5 +1,6 @@
 package com.thinkfaster.model.scene.game;
 
+import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.util.SceneType;
 
 import static com.thinkfaster.util.SceneType.MULTIPLAYER_GAME;
@@ -15,10 +16,7 @@ public class MultiplayerGameScene extends AbstractGameScene {
 
     }
 
-    @Override
-    public void onBackKeyPressed() {
 
-    }
 
     @Override
     public SceneType getSceneType() {

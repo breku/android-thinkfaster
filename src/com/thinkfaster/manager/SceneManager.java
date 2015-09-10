@@ -1,19 +1,27 @@
 package com.thinkfaster.manager;
 
-import com.thinkfaster.model.scene.*;
+import com.thinkfaster.model.scene.BaseScene;
+import com.thinkfaster.model.scene.LoadingScene;
+import com.thinkfaster.model.scene.SplashScene;
 import com.thinkfaster.model.scene.game.EndGameScene;
 import com.thinkfaster.model.scene.game.GameTypeScene;
 import com.thinkfaster.model.scene.game.SinglePlayerGameScene;
+import com.thinkfaster.model.scene.game.WaitingRoomScene;
 import com.thinkfaster.model.scene.menu.AboutScene;
 import com.thinkfaster.model.scene.menu.HighScoreScene;
 import com.thinkfaster.model.scene.menu.MainMenuScene;
 import com.thinkfaster.model.scene.menu.OptionsScene;
 import com.thinkfaster.service.AdvertService;
-import com.thinkfaster.util.*;
+import com.thinkfaster.util.AppRater;
+import com.thinkfaster.util.LevelDifficulty;
+import com.thinkfaster.util.MathParameter;
+import com.thinkfaster.util.SceneType;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.ui.IGameInterface;
 import org.andengine.ui.activity.BaseGameActivity;
+
+import static com.thinkfaster.util.ContextConstants.LOADING_SCENE_TIME;
 
 /**
  * User: Breku
@@ -27,7 +35,7 @@ public class SceneManager {
 
     private SceneType currentSceneType = SceneType.SPLASH;
     private BaseScene singlePlayerGameScene, menuScene, loadingScene, splashScene, currentScene,
-            aboutScene, optionsScene, endGameScene, recordScene, gameTypeScene;
+            aboutScene, optionsScene, endGameScene, recordScene, gameTypeScene, waitingRoomScene;
     private AdvertService advertService;
 
     public static void prepareManager(BaseGameActivity activity) {
@@ -69,31 +77,22 @@ public class SceneManager {
         currentSceneType = scene.getSceneType();
     }
 
-    private void disposeSplashScene() {
-        splashScene.disposeScene();
-        splashScene = null;
+    public void loadWaitingRoomScene() {
+        waitingRoomScene = new WaitingRoomScene();
+        setScene(waitingRoomScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
     }
 
-    private void showAppRating() {
-        final BaseGameActivity activity = ResourcesManager.getInstance().getActivity();
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AppRater.app_launched(activity);
-            }
-        });
-    }
-
-
-    public  void loadMenuScene(BaseScene scene){
+    public void loadMenuScene(BaseScene previousScene) {
         setScene(loadingScene);
-        scene.disposeScene();
-        ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.LOADING_SCENE_TIME, new ITimerCallback() {
+        previousScene.disposeScene();
+        ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(LOADING_SCENE_TIME, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 ResourcesManager.getInstance().getEngine().unregisterUpdateHandler(pTimerHandler);
                 ResourcesManager.getInstance().loadMenuTextures();
                 ResourcesManager.getInstance().loadGameTypeResources();
+                ResourcesManager.getInstance().loadCommonResources();
                 setScene(menuScene);
             }
         }));
@@ -112,7 +111,7 @@ public class SceneManager {
     public void loadGameScene(final LevelDifficulty levelDifficulty, final MathParameter mathParameter) {
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadGameTypeTextures();
-        ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.LOADING_SCENE_TIME, new ITimerCallback() {
+        ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(LOADING_SCENE_TIME, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 ResourcesManager.getInstance().getEngine().unregisterUpdateHandler(pTimerHandler);
@@ -126,7 +125,7 @@ public class SceneManager {
     public void loadAboutScene() {
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
-        ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.LOADING_SCENE_TIME / 2, new ITimerCallback() {
+        ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(LOADING_SCENE_TIME / 2, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 ResourcesManager.getInstance().getEngine().unregisterUpdateHandler(pTimerHandler);
@@ -142,7 +141,7 @@ public class SceneManager {
             case MENU:
                 setScene(loadingScene);
                 ResourcesManager.getInstance().unloadMenuTextures();
-                ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.LOADING_SCENE_TIME / 2, new ITimerCallback() {
+                ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(LOADING_SCENE_TIME / 2, new ITimerCallback() {
                     @Override
                     public void onTimePassed(TimerHandler pTimerHandler) {
                         ResourcesManager.getInstance().getEngine().unregisterUpdateHandler(pTimerHandler);
@@ -156,7 +155,7 @@ public class SceneManager {
                 setScene(loadingScene);
                 singlePlayerGameScene.disposeScene();
                 ResourcesManager.getInstance().unloadGameTextures();
-                ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.LOADING_SCENE_TIME / 4, new ITimerCallback() {
+                ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(LOADING_SCENE_TIME / 4, new ITimerCallback() {
                     @Override
                     public void onTimePassed(TimerHandler pTimerHandler) {
                         ResourcesManager.getInstance().getEngine().unregisterUpdateHandler(pTimerHandler);
@@ -187,7 +186,7 @@ public class SceneManager {
     public void loadOptionsScene() {
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
-        ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ContextConstants.LOADING_SCENE_TIME / 2, new ITimerCallback() {
+        ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(LOADING_SCENE_TIME / 2, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 ResourcesManager.getInstance().getEngine().unregisterUpdateHandler(pTimerHandler);
@@ -204,5 +203,20 @@ public class SceneManager {
 
     public void initializeServices() {
         advertService = new AdvertService(activity);
+    }
+
+    private void disposeSplashScene() {
+        splashScene.disposeScene();
+        splashScene = null;
+    }
+
+    private void showAppRating() {
+        final BaseGameActivity activity = ResourcesManager.getInstance().getActivity();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AppRater.app_launched(activity);
+            }
+        });
     }
 }

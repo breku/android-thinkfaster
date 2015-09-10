@@ -1,8 +1,7 @@
 package com.thinkfaster.service.validator;
 
 import com.thinkfaster.manager.ResourcesManager;
-import com.thinkfaster.service.RegisterDeviceService;
-import com.thinkfaster.util.SceneUtils;
+import com.thinkfaster.service.server.RegisterDeviceService;
 
 import static com.thinkfaster.service.DeviceParametersService.isOnline;
 import static com.thinkfaster.util.SceneUtils.gameToast;

@@ -1,21 +1,13 @@
-package test.com.thinkfaster.service;
+package com.thinkfaster.service;
 
 import com.thinkfaster.model.shape.MathEquation;
-import com.thinkfaster.service.MathService;
 import com.thinkfaster.util.LevelDifficulty;
 import com.thinkfaster.util.MathParameter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * User: Breku
- * Date: 19.10.13
- */
 public class MathServiceTest {
-
     private final Integer NUMBER_OF_LOOPS = 1000;
     private MathService mathService;
 
